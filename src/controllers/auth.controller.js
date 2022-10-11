@@ -12,7 +12,7 @@ const createUser = async (req, res) => {
     await connection.query(`
     INSERT INTO users 
     (name, email, "passwordHash") 
-    VALUES ($1,$2,$3)`,
+    VALUES ($1,$2,$3);`,
       [name, email, passwordHash]);
 
     res.sendStatus(201);
@@ -29,7 +29,7 @@ const createSession = async (req, res) => {
     const user = (await connection.query(`
     SELECT * 
     FROM users 
-    WHERE email = $1`,
+    WHERE email = $1;`,
       [email])).rows[0];
 
     const passwordValidation = bcrypt.compareSync(password, user.passwordHash);
@@ -39,7 +39,7 @@ const createSession = async (req, res) => {
       await connection.query(`
       INSERT INTO sessions
       ("userId", token)
-      VALUES ($1,$2)`,
+      VALUES ($1,$2);`,
         [user.id, token]);
 
       return res.status(200).send(token);
@@ -56,7 +56,7 @@ const endSession = async (req, res) => {
   try {
     await connection.query(`
     DELETE FROM sessions 
-    WHERE token = $1`,
+    WHERE token = $1;`,
       [res.locals.token]);
 
     res.sendStatus(200);

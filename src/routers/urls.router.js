@@ -6,6 +6,8 @@ const router = express.Router();
 
 router.post('/urls/shorten', tokenValidation, urlsControllers.shortenUrl);
 
+router.get('/urls/:id', urlsControllers.viewUrl);
+
 router.get('/urls/open/:shortUrl', urlsControllers.redirectUrl);
 
 export default router;

@@ -10,7 +10,7 @@ const shortenUrl = async (req, res) => {
     await connection.query(`
     INSERT INTO urls 
     (userId,shortUrl, url) 
-    VALUES ($1,$2,$3)`,
+    VALUES ($1,$2,$3);`,
       [res.locals.userId, shortUrl, url]);
 
     res.status(201).send(shortUrl);
@@ -27,7 +27,7 @@ const redirectUrl = async (req, res) => {
     const url = await connection.query(`
     SELECT id, url
     FROM urls 
-    WHERE "shortUrl" = $1`,
+    WHERE "shortUrl" = $1;`,
       [shortUrl]);
 
     if (url.rowCount === 0) {
@@ -37,7 +37,7 @@ const redirectUrl = async (req, res) => {
     await connection.query(`
     UPDATE urls
      SET "visitCount" = "visitCount" + 1 
-     WHERE id = $1`,
+     WHERE id = $1;`,
       [url.rows[0].id]);
 
     res.redirect(200, url.rows[0].url);
@@ -48,4 +48,26 @@ const redirectUrl = async (req, res) => {
 
 };
 
-export { shortenUrl, redirectUrl };
+const viewUrl = async (req, res) => {
+  const urlId = req.params.id;
+
+  try {
+
+    const url = await connection.query(`
+    SELECT id, "shortUrl", url 
+    FROM urls 
+    WHERE id = $1;`,
+      [urlId]);
+
+    if (url.rowCount === 0) {
+      return res.sendStatus(404);
+    }
+
+    res.status(200).send(url.rows[0]);
+  } catch (error) {
+    console.log(error);
+    res.sendStatus(500);
+  }
+};
+
+export { shortenUrl, redirectUrl, viewUrl };
