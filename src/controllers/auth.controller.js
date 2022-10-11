@@ -44,4 +44,15 @@ const createSession = async (req, res) => {
   }
 };
 
-export { createUser, createSession };
+const endSession = async (req, res) => {
+
+  try {
+    await connection.query(`DELETE FROM sessions WHERE token = $1`, [res.locals.token]);
+    res.sendStatus(200);
+  } catch (error) {
+    console.log(error);
+    res.sendStatus(500);
+  }
+};
+
+export { createUser, createSession, endSession };
