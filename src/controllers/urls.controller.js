@@ -9,7 +9,7 @@ const shortenUrl = async (req, res) => {
   try {
     await connection.query(`
     INSERT INTO urls 
-    (userId,shortUrl, url) 
+    ("userId","shortUrl", url) 
     VALUES ($1,$2,$3);`,
       [res.locals.userId, shortUrl, url]);
 
@@ -70,4 +70,32 @@ const viewUrl = async (req, res) => {
   }
 };
 
-export { shortenUrl, redirectUrl, viewUrl };
+const deleteUrl = async (req, res) => {
+  const urlId = req.params.id;
+
+  try {
+    const url = await (connection.query(`
+    SELECT id, "userId" 
+    FROM urls 
+    WHERE id = $1;`,
+      [urlId]));
+
+    if (url.rowCount === 0) {
+      return res.sendStatus(404);
+    }
+    if (url.rows[0].userId === res.locals.userId) {
+      await connection.query(`
+      DELETE FROM urls 
+      WHERE id = $1;`,
+        [urlId]);
+      return res.sendStatus(204);
+    }
+    res.sendStatus(401);
+
+  } catch (error) {
+    console.log(error);
+    res.sendStatus(500);
+  }
+};
+
+export { shortenUrl, redirectUrl, viewUrl, deleteUrl };

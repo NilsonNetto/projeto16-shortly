@@ -10,4 +10,6 @@ router.get('/urls/:id', urlsControllers.viewUrl);
 
 router.get('/urls/open/:shortUrl', urlsControllers.redirectUrl);
 
+router.delete('/urls/:id', tokenValidation, urlsControllers.deleteUrl);
+
 export default router;
