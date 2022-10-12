@@ -36,7 +36,9 @@ const redirectUrl = async (req, res) => {
 
     await connection.query(`
     UPDATE urls
-     SET "visitCount" = "visitCount" + 1 
+     SET
+     "visitCount" = "visitCount" + 1,
+     "lastVisit" = NOW() 
      WHERE id = $1;`,
       [url.rows[0].id]);
 
