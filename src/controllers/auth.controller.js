@@ -2,9 +2,8 @@ import bcrypt from "bcrypt";
 import { nanoid } from "nanoid";
 import connection from "../db/db.js";
 
-
 const createUser = async (req, res) => {
-  const { name, email, password, confirPassword } = req.body;
+  const { name, email, password } = res.locals.body;
 
   const passwordHash = bcrypt.hashSync(password, 13);
 
@@ -23,16 +22,11 @@ const createUser = async (req, res) => {
 };
 
 const createSession = async (req, res) => {
-  const { email, password } = req.body;
+  const { password, userId, passwordHash } = res.locals.body;
 
   try {
-    const user = (await connection.query(`
-    SELECT * 
-    FROM users 
-    WHERE email = $1;`,
-      [email])).rows[0];
 
-    const passwordValidation = bcrypt.compareSync(password, user.passwordHash);
+    const passwordValidation = bcrypt.compareSync(password, passwordHash);
 
     if (passwordValidation) {
       const token = nanoid();
@@ -41,7 +35,7 @@ const createSession = async (req, res) => {
       INSERT INTO sessions
       ("userId", token)
       VALUES ($1,$2);`,
-        [user.id, token]);
+        [userId, token]);
 
       return res.status(200).send({ token });
     }
