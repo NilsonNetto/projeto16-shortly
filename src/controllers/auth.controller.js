@@ -36,13 +36,14 @@ const createSession = async (req, res) => {
 
     if (passwordValidation) {
       const token = nanoid();
+
       await connection.query(`
       INSERT INTO sessions
       ("userId", token)
       VALUES ($1,$2);`,
         [user.id, token]);
 
-      return res.status(200).send(token);
+      return res.status(200).send({ token });
     }
     return res.sendStatus(401);;
   } catch (error) {

@@ -13,7 +13,8 @@ const shortenUrl = async (req, res) => {
     VALUES ($1,$2,$3);`,
       [res.locals.userId, shortUrl, url]);
 
-    res.status(201).send(shortUrl);
+
+    res.status(201).send({ shortUrl });
   } catch (error) {
     console.log(error);
     res.sendStatus(500);
