@@ -8,9 +8,9 @@ const listUser = async (req, res) => {
     SELECT 
     u1.id, 
     u1.name, 
-    SUM(u2."visitCount") AS "visitCount"
+    SUM(COALESCE(u2."visitCount",0)) AS "visitCount"
     FROM users u1 
-    JOIN urls u2 
+    LEFT JOIN urls u2 
     ON u1.id = u2."userId" 
     WHERE u1.id = $1 
     GROUP BY u1.id ;`,
@@ -28,7 +28,6 @@ const listUser = async (req, res) => {
       shortenedUrls: userShortenedUrls
     };
 
-    //tem aquele caso o usuário não existe, mas acho que deve ser se não houver links dele
     res.status(200).send(response);
   } catch (error) {
     console.log(error);
@@ -43,14 +42,14 @@ const listRanking = async (req, res) => {
 
     const ranking = (await connection.query(`
     SELECT 
-    u2.id, 
-    u2.name, 
-    COUNT(u1."userId") AS "linksCount", 
-    SUM(u1."visitCount") AS "visitCount" 
-    FROM urls u1 
-    JOIN users u2 
-    ON u1."userId" = u2.id 
-    GROUP BY u2.id 
+    u1.id, 
+    u1.name, 
+    COUNT(u2."userId") AS "linksCount", 
+    SUM(COALESCE(u2."visitCount",0)) AS "visitCount" 
+    FROM users u1 
+    LEFT JOIN urls u2 
+    ON u1.id = u2."userId" 
+    GROUP BY u1.id 
     ORDER BY "visitCount" DESC 
     LIMIT 10; 
     `)).rows;

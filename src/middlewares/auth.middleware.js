@@ -13,7 +13,7 @@ const tokenValidation = async (req, res, next) => {
     const session = (await connection.query(`SELECT * FROM sessions WHERE token = $1`, [token])).rows[0];
 
     if (!session) {
-      return res.sendStatus(401);
+      return res.sendStatus(404);
     }
 
     res.locals.userId = session.userId;
