@@ -9,7 +9,7 @@ const signupSchema = joi.object({
     .required()
     .label('Confirm password')
     .options({ messages: { 'any.only': '{{#label}} does not match' } })
-}).unknown(false);
+});
 
 const newUserValidation = async (req, res, next) => {
   const { name, email, password, confirmPassword } = req.body;

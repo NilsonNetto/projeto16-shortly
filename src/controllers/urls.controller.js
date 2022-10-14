@@ -2,7 +2,7 @@ import { nanoid } from "nanoid";
 import connection from "../db/db.js";
 
 const shortenUrl = async (req, res) => {
-  const { url } = req.body;
+  const { url } = res.locals;
 
   const shortUrl = nanoid(13);
 
