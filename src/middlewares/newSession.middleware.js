@@ -4,16 +4,13 @@ import joi from "joi";
 const signinSchema = joi.object({
   email: joi.string().email().trim().required(),
   password: joi.string().min(6).trim().required()
-}).unknown(false);
+});
 
 
 const newSessionValidation = async (req, res, next) => {
   const { email, password } = req.body;
 
-  const validation = signinSchema.validate({
-    email,
-    password,
-  }, { abortEarly: false });
+  const validation = signinSchema.validate(req.body, { abortEarly: false });
 
   if (validation.error) {
     const errors = validation.error.details.map(error => error.message);
@@ -26,7 +23,7 @@ const newSessionValidation = async (req, res, next) => {
     SELECT
     id, "passwordHash" 
     FROM users 
-    WHERE email = $1`,
+    WHERE LOWER(email) = LOWER($1)`,
       [email])).rows[0];
 
     if (!userExists) {

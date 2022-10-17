@@ -7,9 +7,7 @@ const urlSchema = joi.object({
 const shortenUrlValidation = (req, res, next) => {
   const { url } = req.body;
 
-  const validation = urlSchema.validate({
-    url
-  }, { abortEarly: false });
+  const validation = urlSchema.validate(req.body, { abortEarly: false });
 
   if (validation.error) {
     const errors = validation.error.details.map(error => error.message);

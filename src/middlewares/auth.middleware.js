@@ -5,7 +5,7 @@ const tokenValidation = async (req, res, next) => {
 
   const token = authorization?.replace('Bearer ', '');
 
-  if (!token) {
+  if (!token || token.length !== 21) {
     return res.sendStatus(401);
   }
 

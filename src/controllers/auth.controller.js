@@ -11,7 +11,7 @@ const createUser = async (req, res) => {
     await connection.query(`
     INSERT INTO users 
     (name, email, "passwordHash") 
-    VALUES ($1,$2,$3);`,
+    VALUES ($1,LOWER($2),$3);`,
       [name, email, passwordHash]);
 
     res.sendStatus(201);

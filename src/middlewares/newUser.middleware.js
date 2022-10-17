@@ -12,14 +12,9 @@ const signupSchema = joi.object({
 });
 
 const newUserValidation = async (req, res, next) => {
-  const { name, email, password, confirmPassword } = req.body;
+  const { name, email, password } = req.body;
 
-  const validation = signupSchema.validate({
-    name,
-    email,
-    password,
-    confirmPassword
-  }, { abortEarly: false });
+  const validation = signupSchema.validate(req.body, { abortEarly: false });
 
   if (validation.error) {
     const errors = validation.error.details.map(error => error.message);
@@ -28,7 +23,11 @@ const newUserValidation = async (req, res, next) => {
 
   try {
 
-    const isRepeated = (await connection.query(`SELECT id FROM users WHERE email = $1`, [email])).rows[0];
+    const isRepeated = (await connection.query(`
+    SELECT id 
+    FROM users 
+    WHERE LOWER(email) = LOWER($1)`,
+      [email])).rows[0];
 
     if (isRepeated) {
       return res.sendStatus(409);

@@ -43,7 +43,7 @@ const redirectUrl = async (req, res) => {
      WHERE id = $1;`,
       [url.rows[0].id]);
 
-    res.redirect(200, url.rows[0].url);
+    res.redirect(url.rows[0].url);
   } catch (error) {
     console.log(error);
     res.sendStatus(500);
