@@ -39,7 +39,7 @@ const createSession = async (req, res) => {
 
       return res.status(200).send({ token });
     }
-    return res.sendStatus(401);;
+    return res.sendStatus(401);
   } catch (error) {
     console.log(error);
     res.sendStatus(500);
